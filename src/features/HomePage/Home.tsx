@@ -19,20 +19,20 @@ import SidebarDragItem from "./SidebarDragItem";
 const Home = () => {
   const InputTypes = ["text", "password", "number"];
   const [formField, setFormField] = useState<Field[]>([
-    // {
-    //   id: uuidv4(),
-    //   type: "text",
-    //   label: "Name",
-    //   required: false,
-    //   options: [""],
-    // },
-    // {
-    //   id: uuidv4(),
-    //   type: "password",
-    //   label: "Password",
-    //   required: false,
-    //   options: [""],
-    // },
+    {
+      id: uuidv4(),
+      type: "text",
+      label: "Name",
+      required: false,
+      options: [""],
+    },
+    {
+      id: uuidv4(),
+      type: "password",
+      label: "Password",
+      required: false,
+      options: [""],
+    },
   ]);
   const [dragedType, setDraggedType] = useState<string | null>(null);
 
@@ -45,18 +45,20 @@ const Home = () => {
     // }
     console.log("in drag end over", over);
     console.log("in drag end active", active);
-    const dragId = active.id.toString();
-    if (!dragedType) {
-      return;
-    }
-    const formFieldId = formField.map((field) => field.id);
-    const activeId = active.id.toString();
-    if (formFieldId.includes(activeId)) {
-      const fieldContainer={...formField}
+    // const dragId = active.id.toString();
+    // if (!dragedType) {
+    //   return;
+    // }
+    // const formFieldId = formField.map((field) => field.id);
+    // const activeId = active.id.toString();
+    // if (formFieldId.includes(activeId)) {
+      console.log("in if");
+      const fieldContainer=[...formField]
       const activeItem = formField.find((item) => item.id === active.id);
 
       const overItem = formField.find((item) => item.id === over.id);
-
+      console.log("activeitem",activeItem);
+      console.log(overItem);
       if (!activeItem || !overItem) {
         return;
       }
@@ -64,22 +66,28 @@ const Home = () => {
       const activeIndex = formField.findIndex((item) => item.id === active.id);
 
       const overIndex = formField.findIndex((item) => item.id === over.id);
+      console.log("active",activeIndex);
+      console.log('overindex',overIndex);
 
       if (activeIndex !== overIndex) {
         // setItems((prev) => arrayMove<TItem>(prev, activeIndex, overIndex));
-           setFormField((items) => arrayMove(items, activeIndex, overIndex));
+        let temp=fieldContainer[activeIndex]
+        fieldContainer[activeIndex]=fieldContainer[overIndex]
+        fieldContainer[overIndex]=temp
+         console.log(true);  
+         setFormField(fieldContainer)
       }
-    } else if (over.id === "string") {
-      const newField: Field = {
-        id: uuidv4(),
-        type: dragedType,
-        label: "",
-        required: false,
-        options: [""],
-      };
-      setFormField((prev) => [...prev, newField]);
-      setDraggedType(null);
-    }
+    // } else if (over.id === "string") {
+    //   const newField: Field = {
+    //     id: uuidv4(),
+    //     type: dragedType,
+    //     label: "",
+    //     required: false,
+    //     options: [""],
+    //   };
+    //   setFormField((prev) => [...prev, newField]);
+    //   setDraggedType(null);
+    // }
   };
 
   console.log("selected Field", formField);
