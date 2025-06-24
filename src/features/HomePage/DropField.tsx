@@ -2,28 +2,30 @@ import { useDroppable } from "@dnd-kit/core";
 import React, { type ReactNode } from "react";
 import DragableField from "./DragableField";
 
-interface DropFieldProps {
-  id: "string";
-  children: ReactNode;
-}
-const DropField: React.FC<DropFieldProps> = (props) => {
-  const { over, active, isOver, setNodeRef } = useDroppable({
-    id: props.id,
-  });
-  const style = {
-    backgroundColor: over?.id === "password" ? "green" : undefined,
-  };
-  //   console.log(over);
-  //   console.log(active);
+const DropField: React.FC<{ id: string; children: React.ReactNode }> = ({
+  id,
+  children,
+}) => {
+  const { setNodeRef, isOver } = useDroppable({ id });
+
+  // const style = {
+  //   backgroundColor: isOver ? "#f0f0f0" : "white",
+  //   minHeight: 200,
+  //   padding: "1rem",
+  //   border: "2px dashed black",
+  //   borderRadius: "0.5rem",
+  // };
+
   return (
     <>
-      <h2 className="text-xl font-bold mb-4">Form Canvas</h2>
-      <div
-        className="m-20 p-50 border-2 border-black"
-        style={style}
-        ref={setNodeRef}
-      >
-        {props.children}
+      <div className="w-3/4 bg-white p-4 rounded shadow h-200" ref={setNodeRef}>
+        <div className="h-180 scroll-auto">
+          <h2 className="font-bold mb-2">Form Canvas</h2>
+          {children}
+        </div>
+        <button className="px-3 py-1 bg-green-500 text-white rounded cursor-pointer">
+          Submit
+        </button>
       </div>
     </>
   );

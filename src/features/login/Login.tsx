@@ -45,6 +45,7 @@ const Login: React.FC = () => {
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <TextInputComponent
+            type="text"
               placeholder="Jaydip"
               label="Username"
               error={errors.username?.message}

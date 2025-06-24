@@ -3,5 +3,12 @@ export interface Field {
   type: string;
   label: string;
   required: boolean;
-  options?: string[];
+  size?:number;
+  maxLenght?:number;
+  minLength?:number;
+  options?: Options[];
+}
+
+export interface Options {
+ label: string, value: string 
 }

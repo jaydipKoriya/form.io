@@ -2,7 +2,7 @@ import { createBrowserRouter,type RouteObject } from "react-router";
 import Login from '../features/login/Login'
 import Home from "../features/HomePage/Home";
 import DragExample from "../Try/Home";
-// import Home2 from "../Try/Home";
+
 
 const routes:RouteObject[]=[
     {
