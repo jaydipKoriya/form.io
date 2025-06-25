@@ -13,24 +13,15 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { v4 as uuidv4 } from "uuid";
-import type { Field } from "../../Types/FormBuilder/Form";
+import type { Field, FormArray } from "../../Types/FormBuilder/Form";
 import SidebarDragItem from "./SidebarDragItem";
 import FieldConfiguration from "./FieldConfiguration";
+import useLocalStorage from "../../hook/useLocalStorage";
+import FileUploader from "../../component/form/FileUploader";
+import { Link } from "react-router";
+import { readJsonFile } from "../../Utils/readFile";
+import type { FieldArray } from "react-hook-form";
 
-// {
-//   id: uuidv4(),
-//   type: "text",
-//   label: "Name",
-//   required: false,
-//   options: [""],
-// },
-// {
-//   id: uuidv4(),
-//   type: "password",
-//   label: "Password",
-//   required: false,
-//   options: [""],
-// },
 const Home = () => {
   const InputTypes = [
     "text",
@@ -40,23 +31,25 @@ const Home = () => {
     "radio",
     "checkbox",
     "file",
-    "date"
+    "date",
   ];
+
   const [formField, setFormField] = useState<Field[]>([]);
-  // const [draggedType, setDraggedType] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isDropping, setIsDropping] = useState<boolean>(false);
+  const [editField, setEditField] = useState<Field | null>(null);
+  const [storeValue, setStoreValue] = useLocalStorage<FormArray[]>(
+    "formArray",
+    []
+  );
 
   const handleDragStart = (e: DragStartEvent) => {
     const { active } = e;
     const type = active.id.toString();
-    // if (InputTypes.includes(type)) {
-    //   setDraggedType(type);
-    // }
-    console.log('in drag start',type);
     setActiveId(type);
   };
 
+ 
   const handleDragEnd = (e: DragEndEvent) => {
     const { active, over } = e;
     if (!over) return;
@@ -90,44 +83,72 @@ const Home = () => {
     // setDraggedType(null);
   };
 
-//  console.log(formField);
 
-  const handleBuild=()=>{
-    const submitBtn:Field={
-      id:uuidv4(),
-      label:'submit',
-      type:'submit',
-      required:true
+  const handleBuild = () => {
+    console.log(storeValue);
+    const hasSubmit = formField.some((f) => f.type === "submit");
+    if (!hasSubmit) {
+      const submitBtn: Field = {
+        id: uuidv4(),
+        label: "Submit",
+        type: "submit",
+        required: true,
+      };
+      setFormField((prev) => [...prev, submitBtn]);
     }
-    setFormField((prev)=>[...prev,submitBtn])
-    const formArray={
-      formId:Date.now(),
-      formElement:formField
+
+    const formArray = {
+      formId: Date.now(),
+      formElement: formField,
+    };
+
+    const arr = [...storeValue, formArray];
+    setStoreValue(arr);
+    setFormField([]);
+  };
+
+  const removeField = (id: string) => {
+    setFormField((prev) => prev.filter((field) => field.id !== id));
+  };
+
+  const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      const data = (await readJsonFile(
+        event.target.files[0]
+      )) as unknown as FormArray;
+
+      setFormField(data.formElement);
     }
-
-    localStorage.setItem('formArray',JSON.stringify([formArray]));
-    setFormField([])
-  }
-  const removeField=(id:string)=>{
-    setFormField((prev)=>{
-      return prev.filter((field)=>field.id!==id)
-    })
-  }
-
+  };
   return (
     <DndContext
       collisionDetection={closestCenter}
       onDragEnd={handleDragEnd}
-      // onDragStart={(e) => setActiveId(e.active.id)}
       onDragStart={handleDragStart}
     >
       <div className="p-6 space-y-6 min-h-screen bg-gray-100">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold">Form.io Clone</h1>
           <div className="space-x-2">
-            <button onClick={handleBuild} className="px-3 py-1 bg-blue-600 text-white rounded cursor-pointer">Builder</button>
-            <button  className="px-3 py-1 bg-green-500 text-white rounded">Fill Form</button>
-            <button  className="px-3 py-1 bg-gray-500 text-white rounded">Submissions</button>
+            <button
+              onClick={handleBuild}
+              className="px-3 py-1 bg-blue-600 text-white rounded cursor-pointer"
+            >
+              Save Form
+            </button>
+
+            <Link
+              to={"/dashboard"}
+              className="px-3 py-1.5 bg-gray-500 text-white rounded"
+            >
+              My Forms
+            </Link>
+
+            <FileUploader
+              accept={[".json", "application/json"]}
+              onChange={(e) => handleImport(e)}
+              label="Import"
+            />
           </div>
         </div>
 
@@ -138,30 +159,52 @@ const Home = () => {
               <SidebarDragItem key={type} type={type} />
             ))}
           </div>
+
+          <DropField id="canvas">
+            <SortableContext
+              items={formField.map((f) => f.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              {formField.map((field) => (
+                <DragableField
+                  key={field.id}
+                  field={field}
+                  removeField={() => removeField(field.id)}
+                  editField={() => setEditField(field)}
+                />
+              ))}
+            </SortableContext>
+          </DropField>
           
-            <DropField id="canvas">
-              <SortableContext
-                items={formField.map((f) => f.id)}
-                strategy={verticalListSortingStrategy}
-              >
-                {formField.map((field) => (
-                  <DragableField key={field.id} field={field} removeField={()=>removeField(field.id)}/>
-                ))}
-              </SortableContext>
-            </DropField>
-            </div>
+        </div>
       </div>
 
       {activeId && isDropping && (
-        <FieldConfiguration field={activeId} onSave={(field)=>{
-          setFormField((prev)=>[...prev,field]);
-          setIsDropping(false)
-          setActiveId(null)
-        }} onClose={()=>{
-           setIsDropping(false)
-          setActiveId(null)
-        }}/>
-       
+        <FieldConfiguration
+          field={activeId}
+          onSave={(field) => {
+            setFormField((prev) => [...prev, field]);
+            setIsDropping(false);
+            setActiveId(null);
+          }}
+          onClose={() => {
+            setIsDropping(false);
+            setActiveId(null);
+          }}
+        />
+      )}
+      {editField && (
+        <FieldConfiguration
+          field={editField.type}
+          initialData={editField}
+          onSave={(field) => {
+            setFormField((prev) =>
+              prev.map((f) => (f.id === field.id ? field : f))
+            );
+            setEditField(null);
+          }}
+          onClose={() => setEditField(null)}
+        />
       )}
     </DndContext>
   );

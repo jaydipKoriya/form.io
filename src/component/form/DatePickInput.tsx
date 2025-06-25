@@ -1,36 +1,40 @@
-import React, { useState } from "react";
-import DatePicker from "react-datepicker"; // Example: using a library like react-datepicker
+import React from "react";
+import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-interface DatePickerProps {
+interface DatePickInputProps {
   label: string;
-  selectedDate?: Date | null;
-  onChange?: (date: Date | null) => void;
-  minDate?: Date;
-  maxDate?: Date;
+  selectedDate: Date | null;
+  onChange: (date: Date | null) => void;
   placeholder?: string;
+  error?: string;
+  required?: boolean;
+  disabled?: boolean;
 }
 
-const DatePickInput: React.FC<DatePickerProps> = ({
+const DatePickInput: React.FC<DatePickInputProps> = ({
   label,
   selectedDate,
   onChange,
-  minDate,
-  maxDate,
   placeholder,
+  error,
+  disabled,
+  required,
 }) => {
   return (
-    <div>
-      <label htmlFor={label}>{label}</label>
+    <div className="mb-4">
+      <label className="block font-medium mb-1">{label}</label>
       <DatePicker
         selected={selectedDate}
         onChange={onChange}
-        minDate={minDate}
-        maxDate={maxDate}
         placeholderText={placeholder}
         dateFormat="yyyy/MM/dd"
+        className="w-full p-2 border rounded"
+        disabled={disabled}
+        required={required}
         isClearable
       />
+      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
     </div>
   );
 };

@@ -1,34 +1,35 @@
-import React, { type MouseEventHandler } from "react";
-import { useDraggable, useDroppable } from "@dnd-kit/core";
+import React from "react";
+import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { Field } from "../../Types/FormBuilder/Form";
-import { useSortable } from "@dnd-kit/sortable";
+
 import SelectBoxInput from "../../component/form/SelectInput";
 import TextInputComponent from "../../component/form/TextInput";
 import CheckboxInput from "../../component/form/CheckBoxInput";
 import RadioInput from "../../component/form/RadioInput";
 import DatePickInput from "../../component/form/DatePickInput";
+import PasswordInputComponent from "../../component/form/PasswordInput";
+import TextareaInput from "../../component/form/TextareaInput";
 
-interface DragableFieldProps{
-  field:Field,
-  removeField:(id:string)=>void
+interface DragableFieldProps {
+  field: Field;
+  removeField: (id: string) => void;
+  editField: (id: string) => void;
 }
 
-const DragableField: React.FC<DragableFieldProps> = ({field,removeField}) => {
-  
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({
-      id: field.id,
-    });
+const DragableField: React.FC<DragableFieldProps> = ({ field, removeField,editField }) => {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
+    id: field.id,
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
   };
 
-  const handleDelete=()=>{
-   removeField(field.id)
-  }
+  const handleDelete = () => {
+    removeField(field.id);
+  };
 
   return (
     <div
@@ -36,62 +37,31 @@ const DragableField: React.FC<DragableFieldProps> = ({field,removeField}) => {
       {...attributes}
       {...listeners}
       style={style}
-      className="border p-2 mb-2 bg-white rounded shadow cursor-pointer"
-      onDoubleClick={handleDelete}
+      // onDoubleClick={handleDelete}
+      onDoubleClick={() => editField(field.id)}
+      className="border p-3 mb-2 bg-white rounded border-white shadow-sm  cursor-pointer"
     >
-      {field.type === "text" || field.type === "email" ? (
-
-        <TextInputComponent type={field.type} label={field.label} disabled={true}/>
-      ) : field.type === "number" ? (
-        <TextInputComponent type={field.type} label={field.label} disabled={true}/>
-
-      ) 
-      : field.type === "password" ? (
-        <TextInputComponent type={field.type} label={field.label} disabled={true}/>
-      ): field.type === "file" ? (
-        <TextInputComponent type={field.type} label={field.label} disabled={true}/>
-
-      ) : field.type === "select" ? (
-
-        <SelectBoxInput label={field.label} options={field.options}/>
-      ) : field.type === "checkbox" ? (
-          
-          <CheckboxInput label={field.label} options={field.options}/>
-      ) : field.type==='radio'?(
-        <RadioInput onChange={()=>{}}options={field.options} label={field.label}/>
-      ):field.type==='date'?(
-        <DatePickInput label={field.label} placeholder="yyyy/mm/dd"/>
-      ):null}
+      {field.label && (
+        <>
+          {field.type === "text" || field.type === "email" || field.type === "number" || field.type === "file" ? (
+            <TextInputComponent type={field.type} label={field.label} disabled required={field.required}/>
+          ) : field.type === "password" ? (
+            <PasswordInputComponent label={field.label} disabled required={field.required}/>
+          ) : field.type === "select" ? (
+            <SelectBoxInput label={field.label} options={field.options || []} onChange={() => {}} required={field.required}/>
+          ) : field.type === "checkbox" ? (
+            <CheckboxInput label={field.label} options={field.options || []} disabled required={field.required} onChange={()=>{} } value={[]}/>
+          ) : field.type === "radio" ? (
+            <RadioInput label={field.label} options={field.options || []} onChange={() => {}} disabled required={field.required} value=""/>
+          ) : field.type === "date" ? (
+            <DatePickInput label={field.label} placeholder="yyyy/mm/dd" disabled required={field.required} onChange={()=>{}} selectedDate={null}/>
+          ): field.type === "textarea" ? (
+            <TextareaInput label={field.label} disabled required={field.required} />) 
+          : null}
+        </>
+      )}
     </div>
   );
 };
 
 export default DragableField;
-
-// const DraggableField = ({
-//   field,
-//   onClick,
-// }: {
-//   field: Field;
-//   onClick: () => void;
-// }) => {
-//   const { attributes, listeners, setNodeRef, transform, transition } =
-//     useSortable({ id: field.id });
-
-//   const style = { transform: CSS.Transform.toString(transform), transition };
-
-//   return (
-//     <div
-//       ref={setNodeRef}
-//       {...attributes}
-//       {...listeners}
-//       style={style}
-//       onClick={onClick}
-//       className="border p-2 mb-2 bg-white rounded shadow cursor-pointer"
-//     >
-//       <label className="block font-semibold mb-1">{field.label}</label>
-
-//       <input disabled className="w-full p-1 border rounded" type={field.type} />
-//     </div>
-//   );
-// };

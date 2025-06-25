@@ -4,7 +4,7 @@ export interface Field {
   label: string;
   required: boolean;
   size?:number;
-  maxLenght?:number;
+  maxLength?:number;
   minLength?:number;
   options?: Options[];
 }
@@ -12,3 +12,8 @@ export interface Field {
 export interface Options {
  label: string, value: string 
 }
+export interface FormArray {
+  formId: number;
+  formElement: Field[];
+}
+

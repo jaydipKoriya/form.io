@@ -1,46 +1,49 @@
-// src/components/Checkbox.tsx
-import React, { type InputHTMLAttributes } from "react";
+import React from "react";
 import type { Options } from "../../Types/FormBuilder/Form";
-import type { RefCallBack } from "react-hook-form";
 
-interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
+interface CheckboxProps {
   label: string;
-  checked?: boolean;
-  options?: Options[];
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  value?: string;
-  ref?: React.RefObject<HTMLInputElement | null> | RefCallBack;
+  value: string[];
+  options: Options[];
+  onChange: (newValue: string[]) => void;
   error?: string;
   disabled?: boolean;
+  required?: boolean;
 }
 
 const CheckboxInput: React.FC<CheckboxProps> = ({
   label,
-  onChange,
+  value,
   options,
-  ...rest
+  onChange,
+  error,
 }) => {
+  const handleCheckboxChange = (val: string) => {
+    if (value.includes(val)) {
+      onChange(value.filter((v) => v !== val));
+    } else {
+      onChange([...value, val]);
+    }
+  };
+
   return (
-    <div>
-      <label htmlFor={label}>{label}</label>
-      {options ? (
-        options.map((option) => (
-          <label className="inline-flex items-center cursor-pointer">
+    <div className="mb-4">
+      <label className="block font-medium mb-1">{label}</label>
+      <div className="flex flex-col gap-2">
+        {options.map((opt) => (
+          <label key={opt.value} className="inline-flex items-center gap-2">
             <input
               type="checkbox"
-              className="form-checkbox h-5 w-5 text-blue-600 transition duration-150 ease-in-out"
-              onChange={onChange}
-              value={option.value}
-              {...rest}
+              value={opt.value}
+              checked={value.includes(opt.value)}
+              onChange={() => handleCheckboxChange(opt.value)}
+              className="form-checkbox h-4 w-4 text-blue-600"
             />
-            {option.label && (
-              <span className="ml-2 text-gray-700">{option.label}</span>
-            )}
+            <span>{opt.label}</span>
           </label>
-        ))
-      ) : (
-        <p>NO Option avalilable</p>
-      )}
+        ))}
+      </div>
+      {error && <p className="text-red-500 text-sm">{error}</p>}
     </div>
   );
 };

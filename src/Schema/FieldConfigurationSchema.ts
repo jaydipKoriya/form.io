@@ -15,4 +15,4 @@ export const FieldConfigurationSchema=z.object({
 })
 
 
-export type FieldConfiguration=z.infer<typeof FieldConfigurationSchema>
+export type FieldConfigurationType=z.infer<typeof FieldConfigurationSchema>

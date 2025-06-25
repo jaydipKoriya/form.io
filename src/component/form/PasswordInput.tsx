@@ -1,7 +1,8 @@
+import React from "react";
 import type { ChangeEventHandler, MouseEventHandler } from "react";
 import type { RefCallBack } from "react-hook-form";
 
-type TextIpType = {
+type PasswordInputProps = {
   label: string;
   name?: string;
   id?: string;
@@ -12,34 +13,50 @@ type TextIpType = {
   value?: string;
   ref?: React.RefObject<HTMLInputElement | null> | RefCallBack;
   error?: string;
+  required?: boolean;
+  disabled?: boolean;
 };
 
-export default function PasswordInputComponent(prop: TextIpType) {
-  let { label, error, ...rest } = prop;
+export default function PasswordInputComponent({
+  label = "Password",
+  name,
+  id,
+  placeholder,
+  onClick,
+  onChange,
+  onFocus,
+  value,
+  ref,
+  error,
+  required = false,
+  disabled = false,
+}: PasswordInputProps) {
   return (
-    <>
-      {/* <label>{label}</label>
-      <div>
-        <input type="password" {...rest} />
-        {error && <p>{error}</p>}
-      </div> */}
-
-      <div>
-        <div className="flex items-center justify-between">
-          <label className="block text-sm/6 font-medium text-gray-900">
-            Password
-          </label>
-          <div className="text-sm"></div>
-        </div>
-        <div className="mt-2">
-          <input
-            type="password"
-            {...rest}
-            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-          />
-        </div>
-        <div> {error && <p>{error}</p>}</div>
-      </div>
-    </>
+    <div className="mb-5">
+      <label htmlFor={id || name} className="block text-sm font-medium text-gray-700 mb-1">
+        {label}
+        {required && <span className="text-red-500"> *</span>}
+      </label>
+      <input
+        type="password"
+        name={name}
+        id={id}
+        placeholder={placeholder}
+        onClick={onClick}
+        onChange={onChange}
+        onFocus={onFocus}
+        value={value}
+        ref={ref as any}
+        required={required}
+        disabled={disabled}
+        className={`block w-full rounded-md border px-3 py-2 shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
+          ${disabled ? "bg-gray-100" : "bg-white"}
+          ${error ? "border-red-500" : "border-gray-300"}
+        `}
+      />
+      {error && (
+        <p className="mt-1 text-sm text-red-600 font-medium">{error}</p>
+      )}
+    </div>
   );
 }

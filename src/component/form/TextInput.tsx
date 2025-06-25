@@ -1,8 +1,8 @@
 import type { ChangeEventHandler, MouseEventHandler } from "react";
 import type { RefCallBack } from "react-hook-form";
 
-type TextIpType = {
-  type:string
+type TextInputProps = {
+  type: string;
   label: string;
   name?: string;
   id?: string;
@@ -10,41 +10,72 @@ type TextIpType = {
   onClick?: MouseEventHandler<HTMLInputElement>;
   onChange?: ChangeEventHandler<HTMLInputElement>;
   onFocus?: ChangeEventHandler<HTMLInputElement>;
-  value?: string;
+  value?: string | number;
   ref?: React.RefObject<HTMLInputElement | null> | RefCallBack;
   error?: string;
-  disabled?:boolean;
-  size?:number;
-  maxLenght?:number;
-  minLength?:number;
+  disabled?: boolean;
+  size?: number;
+  maxLength?: number;
+  minLength?: number;
+  required?: boolean;
 };
 
-export default function TextInputComponent(prop: TextIpType) {
-  let { label, error, ...rest } = prop;
-  return (
-    <>
-      {/* <label>{label}</label>
+export default function TextInputComponent(props: TextInputProps) {
+  const {
+    label,
+    error,
+    type,
+    id,
+    name,
+    placeholder,
+    disabled,
+    onClick,
+    onChange,
+    onFocus,
+    value,
+    ref,
+    maxLength,
+    minLength,
+    size,
+    required,
+  } = props;
 
-      <div>
-        <input type="text" {...rest} />
-        {error && <p>{error}</p>}
-      </div> */}
-      <div>
+  return (
+    <div className="mb-5">
+      {label && (
         <label
-          htmlFor={label}
-          className="block text-sm/6 font-medium text-gray-900"
+          htmlFor={id || name}
+          className="block text-sm font-medium text-gray-700 mb-1"
         >
           {label}
+          {required && <span className="text-red-500"> *</span>}
         </label>
-        <div className="mt-2">
-          <input
-            {...rest}
-            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-            
-          />
-        </div>
-        <div> {error && <p>{error}</p>}</div>
-      </div>
-    </>
+      )}
+
+      <input
+        ref={ref}
+        type={type}
+        name={name}
+        id={id}
+        placeholder={placeholder}
+        onClick={onClick}
+        onChange={onChange}
+        onFocus={onFocus}
+        value={value}
+        disabled={disabled}
+        maxLength={maxLength}
+        minLength={minLength}
+        size={size}
+        required={required}
+        className={`block w-full rounded-md border px-3 py-2 shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
+          ${disabled ? "bg-gray-100 " : "bg-white"}
+          ${error ? "border-red-500" : "border-gray-300"}
+        `}
+      />
+
+      {error && (
+        <p className="mt-1 text-sm text-red-600 font-medium">{error}</p>
+      )}
+    </div>
   );
 }

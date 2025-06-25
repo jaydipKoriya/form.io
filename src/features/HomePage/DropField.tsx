@@ -1,6 +1,7 @@
 import { useDroppable } from "@dnd-kit/core";
 import React, { type ReactNode } from "react";
 import DragableField from "./DragableField";
+import SubmitButton from "../../component/Button/SubmitButton";
 
 const DropField: React.FC<{ id: string; children: React.ReactNode }> = ({
   id,
@@ -17,17 +18,21 @@ const DropField: React.FC<{ id: string; children: React.ReactNode }> = ({
   // };
 
   return (
-    <>
-      <div className="w-3/4 bg-white p-4 rounded shadow h-200" ref={setNodeRef}>
-        <div className="h-180 scroll-auto">
-          <h2 className="font-bold mb-2">Form Canvas</h2>
-          {children}
-        </div>
-        <button className="px-3 py-1 bg-green-500 text-white rounded cursor-pointer">
-          Submit
-        </button>
+    <div
+      ref={setNodeRef}
+      className={`w-3/4 bg-white p-4 rounded shadow h-200  ${
+        isOver ? " border-1 border-dashed border-blue-400" : ""
+      }`}
+    >
+      <h2 className="font-bold mb-4">Form Canvas</h2>
+      <div className="max-h-170 overflow-y-auto space-y-3">
+        {children}
       </div>
-    </>
+
+      
+        <SubmitButton disabled/>
+      
+    </div>
   );
 };
 

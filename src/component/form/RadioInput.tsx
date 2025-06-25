@@ -1,4 +1,3 @@
-// src/components/RadioGroup.tsx
 import React from "react";
 import type { Options } from "../../Types/FormBuilder/Form";
 import type { RefCallBack } from "react-hook-form";
@@ -7,47 +6,67 @@ interface RadioGroupProps {
   label: string;
   name?: string;
   options?: Options[];
-  selectedValue?: string;
+  value: string; 
   onChange: (value: string) => void;
-  className?: string;
-  value?: string;
+  disabled?: boolean;
+  required?: boolean;
   ref?: React.RefObject<HTMLInputElement | null> | RefCallBack;
   error?: string;
-  disabled?: boolean;
 }
 
 const RadioInput: React.FC<RadioGroupProps> = ({
   name,
-  options,
-  selectedValue,
+  options = [],
+  // selectedValue,
+  value,
   onChange,
-  className,
-  disabled,
+  disabled = false,
+  required = false,
   label,
+  error,
 }) => {
   return (
-    <div className={`flex flex-col space-y-2 ${className || ""}`}>
-      <label htmlFor={label}>{label}</label>
-      {options ? (
-        options.map((option) => (
-          <div
-            key={option.value}
-            className={`inline-flex items-center cursor-pointer `}
-          >
-            <input
-              type="radio"
-              name={name}
-              value={option.value}
-              checked={selectedValue === option.value}
-              onChange={() => onChange(option.value)}
-              disabled={disabled}
-              className="form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out focus:ring-indigo-500"
-            />
-            <span className="ml-2 text-gray-700">{option.label}</span>
-          </div>
-        ))
+    <div className="mb-5">
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        {label}
+        {required && <span className="text-red-500"> *</span>}
+      </label>
+
+      {options.length ? (
+        <div className="flex flex-col gap-2">
+          {options.map((option) => (
+            <label key={option.value} className="inline-flex items-center">
+              {/* <input
+                type="radio"
+                name={name}
+                value={option.value}
+                checked={selectedValue === option.value}
+                onChange={() => onChange(option.value)}
+                disabled={disabled}
+                required={required}
+                className="form-radio h-4 w-4 text-indigo-600 focus:ring-indigo-500"
+              /> */}
+              <input
+                type="radio"
+                // id={`${name}-${option.value}`}
+                name={name}
+                value={option.value}
+                checked={value === option.value}
+                onChange={() => onChange(option.value)}
+                disabled={disabled}
+                required={required}
+                className="form-radio h-4 w-4 text-indigo-600 focus:ring-indigo-500"
+              />
+              <span className="ml-2 text-sm text-gray-700">{option.label}</span>
+            </label>
+          ))}
+        </div>
       ) : (
-        <p>No option available</p>
+        <p className="text-sm text-gray-400 italic">No options available</p>
+      )}
+
+      {error && (
+        <p className="mt-1 text-sm text-red-600 font-medium">{error}</p>
       )}
     </div>
   );
