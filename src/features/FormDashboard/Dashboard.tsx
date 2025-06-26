@@ -1,13 +1,29 @@
+import { useEffect, useState } from "react";
+import { getAllForm } from "../../config/indexDb";
 import useLocalStorage from "../../hook/useLocalStorage";
 import type { FormArray } from "../../Types/FormBuilder/Form";
 import FormCard from "./FormCard";
 
 const Dashboard = () => {
-  const [formArray] = useLocalStorage<FormArray[]>(
-    "formArray",
-    []
-  );
-//   console.log(formArray);
+  // const [formArray] = useLocalStorage<FormArray[]>(
+  //   "formArray",
+  //   []
+  // );
+  //   console.log(formArray);
+  const [formArray, setFormArray] = useState<FormArray[]>([]);
+  useEffect(()=>{
+    const fetchData=async()=>{
+      try {
+        const fetchedData=await getAllForm();
+        setFormArray(fetchedData)
+      } catch (error) {
+        console.log('err aavi');
+        console.error(error);
+      }
+    }
+    fetchData()
+  },[])
+
 
   return (
     <div className="bg-gray-100 h-screen w-full">
@@ -16,9 +32,9 @@ const Dashboard = () => {
           My Forms
         </h2>
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-4 mt-4">
-          {
-            formArray.map((form)=>(<FormCard form={form} />))
-          }
+          {formArray.map((form) => (
+            <FormCard form={form} />
+          ))}
         </div>
       </div>
     </div>

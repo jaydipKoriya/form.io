@@ -1,8 +1,6 @@
-
 import {
   Controller,
   useForm,
- 
   type FieldErrors,
   type FieldValues,
 } from "react-hook-form";
@@ -17,29 +15,54 @@ import RadioInput from "../../component/form/RadioInput";
 import CheckboxInput from "../../component/form/CheckBoxInput";
 import DatePickInput from "../../component/form/DatePickInput";
 import TextareaInput from "../../component/form/TextareaInput";
+import { getAllForm, getForm } from "../../config/indexDb";
+import { useEffect, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import ZodSchemaGenerater from "../../Utils/ZodSchemaGenerater";
 
 const FormBuilder = () => {
-  const [storeData] = useLocalStorage<FormArray[]>(
-    "formArray",
-    []
-  );
+  // const [storeData] = useLocalStorage<FormArray[]>(
+  //   "formArray",
+  //   []
+  // );
+    // const [formData, setFormData] = useLocalStorage<FormArray[]>("formArray", []);
+  const { id } = useParams();
 
-  //   const [formData, setFormData] = useLocalStorage<FormArray[]>("formArray", []);
+  const [formArray, setFormArray] = useState<FormArray>();
   const {
     register,
     handleSubmit,
     formState: { errors },
     setValue,
-   
+
     control,
-  } = useForm();
+  } = useForm({
+    // resolver:zodResolver(ZodSchemaGenerater(formArray?.formElement!))
+  });
+  if (!id) {
+    return <h1>No Form Foundcdsdc</h1>;
+  }
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const fetchedData = await getForm(Number(id));
+        setFormArray(fetchedData);
+      } catch (error) {
+        console.log("err aavi");
+        console.error(error);
+      }
+    };
+    fetchData();
+  }, []);
+  
+
+  // console.log(fetchedData
+
   const navigate = useNavigate();
-  const { id } = useParams();
-  const formFields = storeData.find((form) => form.formId == Number(id));
+
+  const formFields = formArray?.formElement;
 
   const findField = (formField: Field, error: FieldErrors<FieldValues>) => {
-
-
     switch (formField.type) {
       case "text":
         return (
@@ -53,7 +76,7 @@ const FormBuilder = () => {
             {...register(formField.label)}
           />
         );
-        case "email":
+      case "email":
         return (
           <TextInputComponent
             type={formField.type}
@@ -97,7 +120,6 @@ const FormBuilder = () => {
         );
       case "radio":
         return (
-
           <Controller
             name={formField.label}
             control={control}
@@ -115,7 +137,6 @@ const FormBuilder = () => {
         );
       case "checkbox":
         return (
-
           <Controller
             control={control}
             name={formField.label}
@@ -123,11 +144,10 @@ const FormBuilder = () => {
             render={({ field: { onChange, value }, fieldState: { error } }) => (
               <CheckboxInput
                 label={formField.label}
-                options={formField.options||[]}
+                options={formField.options || []}
                 value={value}
                 onChange={onChange}
                 error={error?.message}
-                
               />
             )}
           />
@@ -140,7 +160,7 @@ const FormBuilder = () => {
             error={error.root?.message}
             {...register(formField.label)}
             required={formField.required}
-            accept={formField.fileType?.join(',')}
+            accept={formField.fileType?.join(",")}
           />
         );
       case "date":
@@ -179,15 +199,15 @@ const FormBuilder = () => {
       <form
         onSubmit={handleSubmit((data) => {
           console.log(data);
-          navigate('/')
+          navigate("/");
         })}
       >
         {formFields ? (
-          formFields.formElement.map((field) => (
+          formFields.map((field) => (
             <div key={field.id}>{findField(field, errors)}</div>
           ))
         ) : (
-          <h1>No Form Found</h1>
+          <h1>No Form Found kkkk</h1>
         )}
         <SubmitButton />
       </form>

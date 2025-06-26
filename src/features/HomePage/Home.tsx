@@ -20,11 +20,13 @@ import useLocalStorage from "../../hook/useLocalStorage";
 import FileUploader from "../../component/form/FileUploader";
 import { Link } from "react-router";
 import { readJsonFile } from "../../Utils/readFile";
+import { addForm, openDb } from "../../config/indexDb";
 
 
 const Home = () => {
   const InputTypes = [
     "text",
+    "email",
     "password",
     "number",
     "select",
@@ -84,7 +86,7 @@ const Home = () => {
   };
 
 
-  const handleBuild = () => {
+  const handleBuild = async() => {
     console.log(storeValue);
     const hasSubmit = formField.some((f) => f.type === "submit");
     if (!hasSubmit) {
@@ -102,8 +104,10 @@ const Home = () => {
       formElement: formField,
     };
 
-    const arr = [...storeValue, formArray];
-    setStoreValue(arr);
+    // const arr = [...storeValue, formArray];
+    // setStoreValue(arr);
+    await openDb()
+    addForm(formArray)
     setFormField([]);
   };
 
