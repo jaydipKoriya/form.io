@@ -1,8 +1,8 @@
-import React from "react";
+
 import {
   Controller,
   useForm,
-  type FieldError,
+ 
   type FieldErrors,
   type FieldValues,
 } from "react-hook-form";
@@ -19,17 +19,18 @@ import DatePickInput from "../../component/form/DatePickInput";
 import TextareaInput from "../../component/form/TextareaInput";
 
 const FormBuilder = () => {
-  const [storeData, setStoreData] = useLocalStorage<FormArray[]>(
+  const [storeData] = useLocalStorage<FormArray[]>(
     "formArray",
     []
   );
+
   //   const [formData, setFormData] = useLocalStorage<FormArray[]>("formArray", []);
   const {
     register,
     handleSubmit,
     formState: { errors },
     setValue,
-    getValues,
+   
     control,
   } = useForm();
   const navigate = useNavigate();
@@ -37,12 +38,7 @@ const FormBuilder = () => {
   const formFields = storeData.find((form) => form.formId == Number(id));
 
   const findField = (formField: Field, error: FieldErrors<FieldValues>) => {
-    const props = {
-      label: formField.label,
-      required: formField.required,
-      error: error,
-      ...register(formField.label),
-    };
+
 
     switch (formField.type) {
       case "text":
@@ -54,6 +50,16 @@ const FormBuilder = () => {
             error={error.root?.message}
             maxLength={formField.maxLength}
             minLength={formField.minLength}
+            {...register(formField.label)}
+          />
+        );
+        case "email":
+        return (
+          <TextInputComponent
+            type={formField.type}
+            label={formField.label}
+            required={formField.required}
+            error={error.root?.message}
             {...register(formField.label)}
           />
         );
@@ -117,10 +123,11 @@ const FormBuilder = () => {
             render={({ field: { onChange, value }, fieldState: { error } }) => (
               <CheckboxInput
                 label={formField.label}
-                options={formField.options || []}
+                options={formField.options||[]}
                 value={value}
                 onChange={onChange}
                 error={error?.message}
+                
               />
             )}
           />
@@ -133,6 +140,7 @@ const FormBuilder = () => {
             error={error.root?.message}
             {...register(formField.label)}
             required={formField.required}
+            accept={formField.fileType?.join(',')}
           />
         );
       case "date":
@@ -175,7 +183,7 @@ const FormBuilder = () => {
         })}
       >
         {formFields ? (
-          formFields.formElement.map((field, index) => (
+          formFields.formElement.map((field) => (
             <div key={field.id}>{findField(field, errors)}</div>
           ))
         ) : (

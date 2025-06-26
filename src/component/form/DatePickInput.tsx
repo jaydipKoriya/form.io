@@ -32,7 +32,6 @@ const DatePickInput: React.FC<DatePickInputProps> = ({
         className="w-full p-2 border rounded"
         disabled={disabled}
         required={required}
-        isClearable
       />
       {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
     </div>

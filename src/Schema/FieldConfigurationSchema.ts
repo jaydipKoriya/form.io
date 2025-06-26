@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { optional } from "zod/v4";
+
 
 export const FieldConfigurationSchema=z.object({
     label:z.string().min(4,'Label must be 4 charecter long'),
@@ -7,6 +7,7 @@ export const FieldConfigurationSchema=z.object({
     size:z.number().optional(),
     maxLength:z.number().optional(),
     minLength:z.number().optional(),
+    fileType:z.array(z.string()).optional(),
     options:z.array(z.object({
         label:z.string().min(1,'option value is required'),
 

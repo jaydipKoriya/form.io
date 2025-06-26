@@ -1,5 +1,5 @@
 import React from "react";
-import type { Field, FormArray } from "../../Types/FormBuilder/Form";
+import type {  FormArray } from "../../Types/FormBuilder/Form";
 import { useNavigate } from "react-router";
 
 interface FormCardProps {

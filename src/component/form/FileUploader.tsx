@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import type { RefCallBack } from "react-hook-form";
+
 
 interface FileUploaderProps {
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;

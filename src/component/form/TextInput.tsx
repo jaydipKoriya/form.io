@@ -18,6 +18,7 @@ type TextInputProps = {
   maxLength?: number;
   minLength?: number;
   required?: boolean;
+  accept?:string
 };
 
 export default function TextInputComponent(props: TextInputProps) {
@@ -38,6 +39,7 @@ export default function TextInputComponent(props: TextInputProps) {
     minLength,
     size,
     required,
+    accept,
   } = props;
 
   return (
@@ -67,6 +69,7 @@ export default function TextInputComponent(props: TextInputProps) {
         minLength={minLength}
         size={size}
         required={required}
+        accept={accept}
         className={`block w-full rounded-md border px-3 py-2 shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
           ${disabled ? "bg-gray-100 " : "bg-white"}
           ${error ? "border-red-500" : "border-gray-300"}

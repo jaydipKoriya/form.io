@@ -7,6 +7,7 @@ export interface Field {
   maxLength?:number;
   minLength?:number;
   options?: Options[];
+  fileType?:string[]
 }
 
 export interface Options {

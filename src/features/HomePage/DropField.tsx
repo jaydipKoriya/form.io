@@ -1,6 +1,6 @@
 import { useDroppable } from "@dnd-kit/core";
-import React, { type ReactNode } from "react";
-import DragableField from "./DragableField";
+import React from "react";
+
 import SubmitButton from "../../component/Button/SubmitButton";
 
 const DropField: React.FC<{ id: string; children: React.ReactNode }> = ({

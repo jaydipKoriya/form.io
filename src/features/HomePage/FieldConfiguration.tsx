@@ -1,5 +1,5 @@
 import React from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   FieldConfigurationSchema,
@@ -7,6 +7,7 @@ import {
 } from "../../Schema/FieldConfigurationSchema";
 import type { Field } from "../../Types/FormBuilder/Form";
 import { v4 as uuidv4 } from "uuid";
+import CheckboxInput from "../../component/form/CheckBoxInput";
 
 interface FieldConfigurationProps {
   field: string;
@@ -33,6 +34,7 @@ const FieldConfiguration: React.FC<FieldConfigurationProps> = ({
       minLength: initialData?.minLength || undefined,
       maxLength: initialData?.maxLength || undefined,
       size: initialData?.size || undefined,
+      fileType: initialData?.fileType || undefined,
       options: ["radio", "select", "checkbox"].includes(field)
         ? initialData?.options || [{ label: "", value: "" }]
         : undefined,
@@ -45,6 +47,7 @@ const FieldConfiguration: React.FC<FieldConfigurationProps> = ({
   });
 
   const onSubmit = (data: FieldConfigurationType) => {
+    console.log(data);
     if (initialData?.id) {
       const updatedField: Field = {
         id: initialData.id,
@@ -55,6 +58,7 @@ const FieldConfiguration: React.FC<FieldConfigurationProps> = ({
         minLength: data.minLength,
         maxLength: data.maxLength,
         size: data.size,
+        fileType: data.fileType,
       };
       onSave(updatedField);
     } else {
@@ -67,6 +71,7 @@ const FieldConfiguration: React.FC<FieldConfigurationProps> = ({
         minLength: data.minLength,
         maxLength: data.maxLength,
         size: data.size,
+        fileType: data.fileType,
       };
       onSave(newField);
     }
@@ -93,8 +98,11 @@ const FieldConfiguration: React.FC<FieldConfigurationProps> = ({
             <p className="text-red-500 text-sm mt-1">{errors.label.message}</p>
           )}
         </div>
-
-        {field === "text" && (
+        <label className="inline-flex items-center mt-2">
+          <input type="checkbox" {...register("required")} />
+          <span className="ml-2 text-sm">Required</span>
+        </label>
+        {(field === "text"||field === "number" ) && (
           <>
             <div>
               <label className="block text-sm font-medium">Min Length</label>
@@ -155,12 +163,33 @@ const FieldConfiguration: React.FC<FieldConfigurationProps> = ({
             </div>
           </>
         )}
-
-        <label className="inline-flex items-center mt-2">
-          <input type="checkbox" {...register("required")} />
-          <span className="ml-2 text-sm">Required</span>
-        </label>
-
+        {field === "file" ? (
+          <Controller
+            control={control}
+            name="fileType"
+            defaultValue={[]}
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
+              <CheckboxInput
+                label={"File Type"}
+                options={[
+                  {
+                    label: "Image",
+                    value: "image/*",
+                  },
+                  {
+                    label: "PDF",
+                    value: ".pdf",
+                  },
+                ]}
+                value={value||[]}
+                onChange={onChange}
+                error={error?.message}
+              />
+            )}
+          />
+        ) : (
+          ""
+        )}
         {["radio", "select", "checkbox"].includes(field) && (
           <div className="space-y-2">
             <div className="flex justify-between items-center">

@@ -17,7 +17,6 @@ interface RadioGroupProps {
 const RadioInput: React.FC<RadioGroupProps> = ({
   name,
   options = [],
-  // selectedValue,
   value,
   onChange,
   disabled = false,
@@ -40,7 +39,7 @@ const RadioInput: React.FC<RadioGroupProps> = ({
                 type="radio"
                 name={name}
                 value={option.value}
-                checked={selectedValue === option.value}
+                checked={Value === option.value}
                 onChange={() => onChange(option.value)}
                 disabled={disabled}
                 required={required}
@@ -48,7 +47,6 @@ const RadioInput: React.FC<RadioGroupProps> = ({
               /> */}
               <input
                 type="radio"
-                // id={`${name}-${option.value}`}
                 name={name}
                 value={option.value}
                 checked={value === option.value}

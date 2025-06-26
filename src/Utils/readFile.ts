@@ -1,4 +1,4 @@
-export function readJsonFile<T>(file: Blob) {
+export function readJsonFile(file: Blob) {
     return new Promise((resolve, reject) => {
         const fileReader = new FileReader();
 

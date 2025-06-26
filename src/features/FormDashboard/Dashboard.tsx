@@ -1,10 +1,9 @@
-import React from "react";
 import useLocalStorage from "../../hook/useLocalStorage";
 import type { FormArray } from "../../Types/FormBuilder/Form";
 import FormCard from "./FormCard";
 
 const Dashboard = () => {
-  const [formArray, setFormArray] = useLocalStorage<FormArray[]>(
+  const [formArray] = useLocalStorage<FormArray[]>(
     "formArray",
     []
   );

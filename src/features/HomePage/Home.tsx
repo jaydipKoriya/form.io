@@ -20,7 +20,7 @@ import useLocalStorage from "../../hook/useLocalStorage";
 import FileUploader from "../../component/form/FileUploader";
 import { Link } from "react-router";
 import { readJsonFile } from "../../Utils/readFile";
-import type { FieldArray } from "react-hook-form";
+
 
 const Home = () => {
   const InputTypes = [
