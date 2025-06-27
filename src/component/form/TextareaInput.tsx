@@ -29,6 +29,7 @@ const TextareaInput: React.FC<TextareaProps> = ({
   required,
   rows = 4,
 }) => {
+  console.log(error);
   return (
     <div className="mb-5">
       <label
@@ -54,7 +55,7 @@ const TextareaInput: React.FC<TextareaProps> = ({
           ${error ? "border-red-500" : "border-gray-300"}
         `}
       />
-      {error && (
+      { (
         <p className="mt-1 text-sm text-red-600 font-medium">{error}</p>
       )}
     </div>

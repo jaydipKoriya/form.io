@@ -12,7 +12,8 @@ type PasswordInputProps = {
   onFocus?: ChangeEventHandler<HTMLInputElement>;
   value?: string;
   ref?: React.RefObject<HTMLInputElement | null> | RefCallBack;
-  error?: string;
+    error?:string;
+
   required?: boolean;
   disabled?: boolean;
 };

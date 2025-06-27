@@ -40,12 +40,10 @@ const FieldConfiguration: React.FC<FieldConfigurationProps> = ({
         : undefined,
     },
   });
-
   const { fields, append, remove } = useFieldArray({
     control,
     name: "options",
   });
-
   const onSubmit = (data: FieldConfigurationType) => {
     console.log(data);
     if (initialData?.id) {
@@ -173,12 +171,12 @@ const FieldConfiguration: React.FC<FieldConfigurationProps> = ({
                 label={"File Type"}
                 options={[
                   {
-                    label: "Image",
-                    value: "image/*",
+                    label: "jpg",
+                    value: "image/jpg'",
                   },
                   {
-                    label: "PDF",
-                    value: ".pdf",
+                    label: "png",
+                    value: "image/png",
                   },
                 ]}
                 value={value||[]}

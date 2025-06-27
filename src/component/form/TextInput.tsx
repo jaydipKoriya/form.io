@@ -12,7 +12,7 @@ type TextInputProps = {
   onFocus?: ChangeEventHandler<HTMLInputElement>;
   value?: string | number;
   ref?: React.RefObject<HTMLInputElement | null> | RefCallBack;
-  error?: string;
+  error?:string;
   disabled?: boolean;
   size?: number;
   maxLength?: number;
@@ -41,7 +41,7 @@ export default function TextInputComponent(props: TextInputProps) {
     required,
     accept,
   } = props;
-
+  // console.log(error);
   return (
     <div className="mb-5">
       {label && (

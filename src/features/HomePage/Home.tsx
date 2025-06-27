@@ -16,7 +16,7 @@ import { v4 as uuidv4 } from "uuid";
 import type { Field, FormArray } from "../../Types/FormBuilder/Form";
 import SidebarDragItem from "./SidebarDragItem";
 import FieldConfiguration from "./FieldConfiguration";
-import useLocalStorage from "../../hook/useLocalStorage";
+// import useLocalStorage from "../../hook/useLocalStorage";
 import FileUploader from "../../component/form/FileUploader";
 import { Link } from "react-router";
 import { readJsonFile } from "../../Utils/readFile";
@@ -40,10 +40,10 @@ const Home = () => {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isDropping, setIsDropping] = useState<boolean>(false);
   const [editField, setEditField] = useState<Field | null>(null);
-  const [storeValue, setStoreValue] = useLocalStorage<FormArray[]>(
-    "formArray",
-    []
-  );
+  // const [storeValue, setStoreValue] = useLocalStorage<FormArray[]>(
+  //   "formArray",
+  //   []
+  // );
 
   const handleDragStart = (e: DragStartEvent) => {
     const { active } = e;
@@ -87,7 +87,7 @@ const Home = () => {
 
 
   const handleBuild = async() => {
-    console.log(storeValue);
+    // console.log(storeValue);
     const hasSubmit = formField.some((f) => f.type === "submit");
     if (!hasSubmit) {
       const submitBtn: Field = {

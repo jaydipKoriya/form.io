@@ -1,13 +1,11 @@
 import {
   Controller,
   useForm,
-  type FieldErrors,
-  type FieldValues,
 } from "react-hook-form";
 import TextInputComponent from "../../component/form/TextInput";
 import SubmitButton from "../../component/Button/SubmitButton";
 import { useNavigate, useParams } from "react-router";
-import useLocalStorage from "../../hook/useLocalStorage";
+// import useLocalStorage from "../../hook/useLocalStorage";
 import type { Field, FormArray } from "../../Types/FormBuilder/Form";
 import PasswordInputComponent from "../../component/form/PasswordInput";
 import SelectBoxInput from "../../component/form/SelectInput";
@@ -15,33 +13,21 @@ import RadioInput from "../../component/form/RadioInput";
 import CheckboxInput from "../../component/form/CheckBoxInput";
 import DatePickInput from "../../component/form/DatePickInput";
 import TextareaInput from "../../component/form/TextareaInput";
-import { getAllForm, getForm } from "../../config/indexDb";
+import {  addSubmission, getForm, getSubmission } from "../../config/indexDb";
 import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ZodSchemaGenerater from "../../Utils/ZodSchemaGenerater";
+import { z } from "zod";
 
 const FormBuilder = () => {
   // const [storeData] = useLocalStorage<FormArray[]>(
   //   "formArray",
   //   []
   // );
-    // const [formData, setFormData] = useLocalStorage<FormArray[]>("formArray", []);
+  // const [formData, setFormData] = useLocalStorage<FormArray[]>("formArray", []);
   const { id } = useParams();
 
   const [formArray, setFormArray] = useState<FormArray>();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-
-    control,
-  } = useForm({
-    // resolver:zodResolver(ZodSchemaGenerater(formArray?.formElement!))
-  });
-  if (!id) {
-    return <h1>No Form Foundcdsdc</h1>;
-  }
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -54,25 +40,41 @@ const FormBuilder = () => {
     };
     fetchData();
   }, []);
-  
 
-  // console.log(fetchedData
+  const customZod = ZodSchemaGenerater(formArray?.formElement || []);
+  // console.log(z.object({}).extend(customZod));
+    type FormData = z.infer<typeof customZod>;
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+
+    control,
+  } = useForm<FormData>({
+    resolver: zodResolver(customZod),
+  });
+  if (!id) {
+    return <h1>No Form Foundcdsdc</h1>;
+  }
 
   const navigate = useNavigate();
 
   const formFields = formArray?.formElement;
 
-  const findField = (formField: Field, error: FieldErrors<FieldValues>) => {
+  const findField = (formField: Field, error: any) => {
     switch (formField.type) {
       case "text":
         return (
           <TextInputComponent
             type={formField.type}
             label={formField.label}
-            required={formField.required}
-            error={error.root?.message}
-            maxLength={formField.maxLength}
-            minLength={formField.minLength}
+            // required={formField.required}
+            // error={error}
+            error={error[formField.label]?.message}
+            // maxLength={formField.maxLength}
+            // minLength={formField.minLength}
             {...register(formField.label)}
           />
         );
@@ -81,8 +83,9 @@ const FormBuilder = () => {
           <TextInputComponent
             type={formField.type}
             label={formField.label}
-            required={formField.required}
-            error={error.root?.message}
+            // required={formField.required}
+            // error={errors.root?.message}
+            error={error[formField.label]?.message}
             {...register(formField.label)}
           />
         );
@@ -90,8 +93,9 @@ const FormBuilder = () => {
         return (
           <PasswordInputComponent
             label={formField.label}
-            required={formField.required}
-            error={error.root?.message}
+            // required={formField.required}
+            // error={errors.root?.message}
+            error={error[formField.label]?.message}
             {...register(formField.label)}
           />
         );
@@ -100,10 +104,11 @@ const FormBuilder = () => {
           <TextInputComponent
             type={formField.type}
             label={formField.label}
-            required={formField.required}
-            error={error.root?.message}
-            maxLength={formField.maxLength}
-            minLength={formField.minLength}
+            // required={formField.required}
+            // error={errors.root?.message}
+            error={error[formField.label]?.message}
+            // maxLength={formField.maxLength}
+            // minLength={formField.minLength}
             {...register(formField.label, { valueAsNumber: true })}
           />
         );
@@ -112,8 +117,9 @@ const FormBuilder = () => {
           <SelectBoxInput
             label={formField.label}
             options={formField.options}
-            error={error.root?.message}
-            required={formField.required}
+            // error={errors.root?.message}
+            error={error[formField.label]?.message}
+            // required={formField.required}
             {...register(formField.label)}
             onChange={(e) => setValue(formField.label, e.target.value)}
           />
@@ -157,9 +163,9 @@ const FormBuilder = () => {
           <TextInputComponent
             type="file"
             label={formField.label}
-            error={error.root?.message}
+            error={error[formField.label]?.message}
             {...register(formField.label)}
-            required={formField.required}
+            // required={formField.required}
             accept={formField.fileType?.join(",")}
           />
         );
@@ -185,7 +191,7 @@ const FormBuilder = () => {
         return (
           <TextareaInput
             label={formField.label}
-            error={error.root?.message}
+            error={errors.root?.message}
             required={formField.required}
             maxLength={formField.maxLength}
             {...register(formField.label)}
@@ -194,24 +200,40 @@ const FormBuilder = () => {
     }
   };
 
+  const onSubmit=async(data:any)=>{
+      const subObj={
+        submissionId:Date.now(),
+        submissionData:data
+      }
+      const prevSubmission=await getSubmission(Number(id))
+      const submissionObject={
+        formId:Number(id),
+        submissionArray:prevSubmission?[...(prevSubmission.submissionArray),subObj]:[subObj]
+      }
+      
+      await addSubmission(submissionObject);
+      alert('Form submited');
+      navigate("/");
+  }
+
   return (
-    <>
-      <form
-        onSubmit={handleSubmit((data) => {
-          console.log(data);
-          navigate("/");
-        })}
-      >
-        {formFields ? (
-          formFields.map((field) => (
-            <div key={field.id}>{findField(field, errors)}</div>
-          ))
-        ) : (
-          <h1>No Form Found kkkk</h1>
-        )}
-        <SubmitButton />
-      </form>
-    </>
+    <div className="flex items-center justify-center">
+      <div className=" w-full max-w-lg max-h-[100vh] mt-10 bg-white shadow-lg rounded-lg overflow-y-auto">
+        <form
+          onSubmit={handleSubmit((data) => onSubmit(data))}
+          className=" py-4 px-6"
+        >
+          {formFields ? (
+            formFields.map((field) => (
+              <div key={field.id}>{findField(field, errors)}</div>
+            ))
+          ) : (
+            <h1>No Form Found kkkk</h1>
+          )}
+          <SubmitButton />
+        </form>
+      </div>
+    </div>
   );
 };
 

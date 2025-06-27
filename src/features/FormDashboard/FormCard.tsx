@@ -1,13 +1,39 @@
 import React from "react";
-import type {  FormArray } from "../../Types/FormBuilder/Form";
+import type { FormArray } from "../../Types/FormBuilder/Form";
 import { useNavigate } from "react-router";
+// import { getSubmission } from "../../config/indexDb";
+// import ZodSchemaGenerater from "../../Utils/ZodSchemaGenerater";
+// import type { z } from "zod";
 
 interface FormCardProps {
   form: FormArray;
 }
 
 const FormCard: React.FC<FormCardProps> = ({ form }) => {
-    const navigate=useNavigate()
+      // const customZod = ZodSchemaGenerater(form.formElement);
+  // console.log(z.object({}).extend(customZod));
+    // type FormData = z.infer<typeof customZod>;
+  // const [submissionData, setSbmissionData] = useState<{formId:number,submissionArray:FormData[]}>();
+
+  const navigate = useNavigate();
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const data = await getSubmission(form.formId);
+  //     setSbmissionData(data);
+  //   };
+  //   fetchData();
+  // }, []);
+
+  // const headerData = form.formElement.map((element) => {
+  //   return {
+  //     Label: element.label,
+  //     key: element.label.toLowerCase(),
+  //   };
+  // });
+
+  // const csvData=submissionData!.submissionArray.map((item)=>item.submissionData)
+  // console.log(headerData);
 
   const handleExport = (data: FormArray) => {
     const jsonData = new Blob([JSON.stringify(data)], {
@@ -21,6 +47,7 @@ const FormCard: React.FC<FormCardProps> = ({ form }) => {
     link.click();
     document.body.removeChild(link);
   };
+
   return (
     <div className="bg-white overflow-hidden shadow sm:rounded-lg ">
       <div className="px-4 py-5 sm:p-6">
@@ -31,8 +58,9 @@ const FormCard: React.FC<FormCardProps> = ({ form }) => {
           Field Count:{form.formElement.length}
         </div>
         <div className="flex items-center space-x-3">
-          <button className="px-1.5 py-1  text-sm font-medium bg-blue-600 text-white rounded cursor-pointer"
-            onClick={()=>navigate(`/form/${form.formId}`)}
+          <button
+            className="px-1.5 py-1  text-sm font-medium bg-blue-600 text-white rounded cursor-pointer"
+            onClick={() => navigate(`/form/${form.formId}`)}
           >
             Fill Form
           </button>
