@@ -53,7 +53,7 @@ function getFieldSchema(field: Field) {
 
             tempSchema = z
                 .any()
-                // .refine((files) => files?.length == 1, 'file is required')
+                .refine((files) => files?.length == 1, 'file is required')
                 // console.log(files?.[0]?.type);
                 .refine((files) => {  return (fileType && fileType.includes(files?.[0]?.type)) }), `file type is must be ${fileType?.join(',')}`
             break

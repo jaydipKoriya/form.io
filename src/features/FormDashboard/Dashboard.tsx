@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getAllForm } from "../../config/indexDb";
+import { deleteForm, getAllForm } from "../../config/indexDb";
 // import useLocalStorage from "../../hook/useLocalStorage";
 import type { FormArray } from "../../Types/FormBuilder/Form";
 import FormCard from "./FormCard";
@@ -11,19 +11,28 @@ const Dashboard = () => {
   // );
   //   console.log(formArray);
   const [formArray, setFormArray] = useState<FormArray[]>([]);
-  useEffect(()=>{
-    const fetchData=async()=>{
+  useEffect(() => {
+    const fetchData = async () => {
       try {
-        const fetchedData=await getAllForm();
-        setFormArray(fetchedData)
+        const fetchedData = await getAllForm();
+        setFormArray(fetchedData);
       } catch (error) {
-        console.log('err aavi');
+        console.log("err aavi");
         console.error(error);
       }
+    };
+    fetchData();
+  }, []);
+  const handleDelete = async (id: number) => {
+    const deleteConfirm = confirm("Are you sure you want to delete this form");
+    if (deleteConfirm) {
+      const deletedId = await deleteForm(id);
+      setFormArray((item) => item.filter((t) => t.formId !== deletedId));
+    } else {
+      return;
     }
-    fetchData()
-  },[])
-
+    // console.log(deletedForm);
+  };
 
   return (
     <div className="bg-gray-100 h-screen w-full">
@@ -33,7 +42,7 @@ const Dashboard = () => {
         </h2>
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-4 mt-4">
           {formArray.map((form) => (
-            <FormCard form={form} />
+            <FormCard form={form} onClick={handleDelete} />
           ))}
         </div>
       </div>

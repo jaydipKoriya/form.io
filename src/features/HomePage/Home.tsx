@@ -11,7 +11,7 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { v4 as uuidv4 } from "uuid";
+// import { v4 as uuidv4 } from "uuid";
 import type { Field, FormArray } from "../../Types/FormBuilder/Form";
 import SidebarDragItem from "./SidebarDragItem";
 import FieldConfiguration from "./FieldConfiguration";
@@ -24,7 +24,7 @@ import { addForm, openDb } from "../../config/indexDb";
 const Home = () => {
   const InputTypes = [
     "text",
-    "email",
+    "email",  
     "password",
     "number",
     "select",
@@ -77,27 +77,24 @@ const Home = () => {
 
   const handleBuild = async () => {
     // console.log(storeValue);
-    const hasSubmit = formField.some((f) => f.type === "submit");
-    if (!hasSubmit) {
-      const submitBtn: Field = {
-        id: uuidv4(),
-        label: "Submit",
-        type: "submit",
-        required: true,
+    // const hasSubmit = formField.some((f) => f.type === "submit");
+    
+    const formName = prompt("Enter Form name");
+    if (formName) {
+      const formArray: FormArray = {
+        formId: Date.now(),
+        formName: formName ? formName : String(Date.now),
+        formElement: formField,
       };
-      setFormField((prev) => [...prev, submitBtn]);
+
+      // const arr = [...storeValue, formArray];
+      // setStoreValue(arr);
+      await openDb();
+      addForm(formArray);
+      setFormField([]);
+    } else {
+      return;
     }
-
-    const formArray = {
-      formId: Date.now(),
-      formElement: formField,
-    };
-
-    // const arr = [...storeValue, formArray];
-    // setStoreValue(arr);
-    await openDb();
-    addForm(formArray);
-    setFormField([]);
   };
 
   const removeField = (id: string) => {
@@ -120,11 +117,7 @@ const Home = () => {
   };
 
   return (
-    <DndContext
-      onDragEnd={handleDragEnd}
-      onDragStart={handleDragStart}
-
-    >
+    <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
       <div className="p-6 space-y-6 min-h-screen bg-gray-100">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold">Form.io Clone</h1>
@@ -164,14 +157,20 @@ const Home = () => {
                 items={formField.map((f) => f.id)}
                 strategy={verticalListSortingStrategy}
               >
-                {formField.length>0?formField.map((field) => (
-                  <DragableField
-                    key={field.id}
-                    field={field}
-                    removeField={() => removeField(field.id)}
-                    editField={() => setEditField(field)}
-                  />
-                )):(<h1 className="flex justify-center items-center text-white font-bold">Drop Zone</h1>)}
+                {formField.length > 0 ? (
+                  formField.map((field) => (
+                    <DragableField
+                      key={field.id}
+                      field={field}
+                      removeField={() => removeField(field.id)}
+                      editField={() => setEditField(field)}
+                    />
+                  ))
+                ) : (
+                  <h1 className="flex justify-center items-center text-shadow-black font-bold">
+                    Drop Zone
+                  </h1>
+                )}
               </SortableContext>
             </DropField>
           </div>

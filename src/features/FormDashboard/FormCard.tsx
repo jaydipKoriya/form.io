@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import type { FormArray } from "../../Types/FormBuilder/Form";
 import { useNavigate } from "react-router";
-import { getSubmission } from "../../config/indexDb";
+import {  getSubmission } from "../../config/indexDb";
 import ZodSchemaGenerater from "../../Utils/ZodSchemaGenerater";
 import type { z } from "zod";
 import { CSVLink } from "react-csv";
+import { MdDelete } from "react-icons/md";
 interface FormCardProps {
   form: FormArray;
+  onClick:(id:number)=>void
 }
 
-const FormCard: React.FC<FormCardProps> = ({ form }) => {
+const FormCard: React.FC<FormCardProps> = ({ form,onClick }) => {
   const customZod = ZodSchemaGenerater(form.formElement);
 
   type FormData = z.infer<typeof customZod>;
@@ -52,12 +54,17 @@ const FormCard: React.FC<FormCardProps> = ({ form }) => {
     link.click();
     document.body.removeChild(link);
   };
-
+  
   return (
-    <div className="bg-white overflow-hidden shadow sm:rounded-lg ">
+    <div className="bg-white shadow sm:rounded-lg relative group">
+      
+        <MdDelete className="absolute top-1 right-1 size-5 invisible group-hover:visible transition-transform cursor-pointer" onClick={()=>onClick(form.formId)}/>
+
+  
+      
       <div className="px-4 py-5 sm:p-6">
         <div className="text-sm leading-5 font-medium text-shadow-black">
-          Form Id:{form.formId}
+          {form.formName}
         </div>
         <div className="mt-1 text-sm leading-9 font-semibold text-gray-500 truncate">
           Field Count:{form.formElement.length}
@@ -78,7 +85,13 @@ const FormCard: React.FC<FormCardProps> = ({ form }) => {
           >
             Submissions
           </button> */}
-          <CSVLink data={csvData} filename={`${form.formId}.csv`} className="px-1.5 py-1  text-sm font-medium  bg-green-500 text-white rounded">Submissions</CSVLink>
+          <CSVLink
+            data={csvData}
+            filename={`${form.formId}.csv`}
+            className="px-1.5 py-1  text-sm font-medium  bg-green-500 text-white rounded"
+          >
+            Submissions
+          </CSVLink>
 
           <button
             className="px-1.5 py-1  text-sm font-medium  bg-gray-500 text-white rounded"

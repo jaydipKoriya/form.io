@@ -98,6 +98,25 @@ export const getForm = async (id: number): Promise<FormArray> => {
     })
 }
 
+export const deleteForm = async (id: number): Promise<number> => {
+    const dbInstance = await openDb();
+    const transaction = dbInstance.transaction(STORE_NAME, 'readwrite');
+    const store = transaction.objectStore(STORE_NAME);
+    return new Promise((resolve, reject) => {
+        // const key=id as IDBValidKey
+
+        const request = store.delete(id)
+        request.onsuccess = () => {
+            // const target = event.target as IDBRequest
+            // console.log(target);
+            resolve(id)
+        }
+        request.onerror = (event) => {
+            const target = event.target as IDBRequest
+            reject(target.error)
+        }
+    })
+}
 
 export const addSubmission = async (data: any): Promise<any> => {
     const dbInstance = await openDb();
@@ -153,6 +172,7 @@ export const getSubmission = async (id: number): Promise<any> => {
         }
     })
 }
+
 
 
 

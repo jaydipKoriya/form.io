@@ -1,6 +1,6 @@
 import { useDroppable } from "@dnd-kit/core";
 import React from "react";
-import ButtonComponent from "../../component/Button/SubmitButton";
+// import ButtonComponent from "../../component/Button/SubmitButton";
 
 const DropField: React.FC<{ id: string; children: React.ReactNode }> = ({
   id,
@@ -23,7 +23,7 @@ const DropField: React.FC<{ id: string; children: React.ReactNode }> = ({
         <div className="max-h-170 overflow-y-auto space-y-3">{children}</div>
       </div>
 
-      <ButtonComponent label="Submit" disabled={true} />
+      {/* <ButtonComponent label="Submit" disabled={true} /> */}
     </div>
 
 

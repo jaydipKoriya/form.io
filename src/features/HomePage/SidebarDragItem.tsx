@@ -14,7 +14,7 @@ const SidebarDragItem: React.FC<{ type: string }> = ({ type }) => {
       {...attributes}
       {...listeners}
       style={style}
-      className="cursor-pointer p-2 bg-blue-500 text-white rounded mb-2"
+      className="cursor-pointer p-2 bg-blue-500 text-white rounded mb-2 "
     >
       {type.toUpperCase()}
     </div>

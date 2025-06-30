@@ -15,6 +15,7 @@ export interface Options {
 }
 export interface FormArray {
   formId: number;
+  formName:string
   formElement: Field[];
 }
 
