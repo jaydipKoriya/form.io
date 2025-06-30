@@ -43,7 +43,7 @@ const DragableField: React.FC<DragableFieldProps> = ({
         {...attributes}
         {...listeners}
         style={style}
-        // onDoubleClick={handleDelete}
+        
         onDoubleClick={() => editField(field.id)}
         className="border p-3 mb-2  bg-white rounded border-white shadow-sm  cursor-pointer"
       >
@@ -51,7 +51,7 @@ const DragableField: React.FC<DragableFieldProps> = ({
           <>
             {field.type === "text" ||
             field.type === "email" ||
-            field.type === "number" ||
+            field.type === "number"||
             field.type === "file" ? (
               <TextInputComponent
                 type={field.type}

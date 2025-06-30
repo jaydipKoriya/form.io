@@ -1,38 +1,43 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import type { FormArray } from "../../Types/FormBuilder/Form";
 import { useNavigate } from "react-router";
-// import { getSubmission } from "../../config/indexDb";
-// import ZodSchemaGenerater from "../../Utils/ZodSchemaGenerater";
-// import type { z } from "zod";
-
+import { getSubmission } from "../../config/indexDb";
+import ZodSchemaGenerater from "../../Utils/ZodSchemaGenerater";
+import type { z } from "zod";
+import { CSVLink } from "react-csv";
 interface FormCardProps {
   form: FormArray;
 }
 
 const FormCard: React.FC<FormCardProps> = ({ form }) => {
-      // const customZod = ZodSchemaGenerater(form.formElement);
-  // console.log(z.object({}).extend(customZod));
-    // type FormData = z.infer<typeof customZod>;
-  // const [submissionData, setSbmissionData] = useState<{formId:number,submissionArray:FormData[]}>();
+  const customZod = ZodSchemaGenerater(form.formElement);
+
+  type FormData = z.infer<typeof customZod>;
+  const [submissionData, setSbmissionData] = useState<{
+    formId: number;
+    submissionArray: { submissionId: number; submissionData: FormData }[];
+  }>();
 
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const data = await getSubmission(form.formId);
-  //     setSbmissionData(data);
-  //   };
-  //   fetchData();
-  // }, []);
-
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getSubmission(form.formId);
+      setSbmissionData(data);
+    };
+    fetchData();
+  }, []);
+  // console.log(submissionData);
   // const headerData = form.formElement.map((element) => {
   //   return {
   //     Label: element.label,
-  //     key: element.label.toLowerCase(),
+  //     key: element.label,
   //   };
   // });
 
-  // const csvData=submissionData!.submissionArray.map((item)=>item.submissionData)
+  const csvData =
+    submissionData?.submissionArray.map((data) => data.submissionData) || [];
+  // console.log(csvData);
   // console.log(headerData);
 
   const handleExport = (data: FormArray) => {
@@ -64,9 +69,17 @@ const FormCard: React.FC<FormCardProps> = ({ form }) => {
           >
             Fill Form
           </button>
-          <button className="px-1.5 py-1  text-sm font-medium  bg-green-500 text-white rounded">
+          {/* <button
+            className="px-1.5 py-1  text-sm font-medium  bg-green-500 text-white rounded"
+            onClick={() => {
+              console.log(csvData);
+              console.log(headerData);
+            }}
+          >
             Submissions
-          </button>
+          </button> */}
+          <CSVLink data={csvData} filename={`${form.formId}.csv`} className="px-1.5 py-1  text-sm font-medium  bg-green-500 text-white rounded">Submissions</CSVLink>
+
           <button
             className="px-1.5 py-1  text-sm font-medium  bg-gray-500 text-white rounded"
             onClick={() => handleExport(form)}

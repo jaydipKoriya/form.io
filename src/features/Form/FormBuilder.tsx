@@ -1,9 +1,6 @@
-import {
-  Controller,
-  useForm,
-} from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import TextInputComponent from "../../component/form/TextInput";
-import SubmitButton from "../../component/Button/SubmitButton";
+
 import { useNavigate, useParams } from "react-router";
 // import useLocalStorage from "../../hook/useLocalStorage";
 import type { Field, FormArray } from "../../Types/FormBuilder/Form";
@@ -13,11 +10,12 @@ import RadioInput from "../../component/form/RadioInput";
 import CheckboxInput from "../../component/form/CheckBoxInput";
 import DatePickInput from "../../component/form/DatePickInput";
 import TextareaInput from "../../component/form/TextareaInput";
-import {  addSubmission, getForm, getSubmission } from "../../config/indexDb";
+import { addSubmission, getForm, getSubmission } from "../../config/indexDb";
 import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ZodSchemaGenerater from "../../Utils/ZodSchemaGenerater";
 import { z } from "zod";
+import ButtonComponent from "../../component/Button/SubmitButton";
 
 const FormBuilder = () => {
   // const [storeData] = useLocalStorage<FormArray[]>(
@@ -43,7 +41,7 @@ const FormBuilder = () => {
 
   const customZod = ZodSchemaGenerater(formArray?.formElement || []);
   // console.log(z.object({}).extend(customZod));
-    type FormData = z.infer<typeof customZod>;
+  type FormData = z.infer<typeof customZod>;
 
   const {
     register,
@@ -200,38 +198,46 @@ const FormBuilder = () => {
     }
   };
 
-  const onSubmit=async(data:any)=>{
-      const subObj={
-        submissionId:Date.now(),
-        submissionData:data
-      }
-      const prevSubmission=await getSubmission(Number(id))
-      const submissionObject={
-        formId:Number(id),
-        submissionArray:prevSubmission?[...(prevSubmission.submissionArray),subObj]:[subObj]
-      }
-      
-      await addSubmission(submissionObject);
-      alert('Form submited');
-      navigate("/");
-  }
+  const onSubmit = async (data: any) => {
+    const subObj = {
+      submissionId: Date.now(),
+      submissionData: data,
+    };
+    const prevSubmission = await getSubmission(Number(id));
+    const submissionObject = {
+      formId: Number(id),
+      submissionArray: prevSubmission
+        ? [...prevSubmission.submissionArray, subObj]
+        : [subObj],
+    };
+
+    await addSubmission(submissionObject);
+    alert("Form submited");
+    navigate("/dashboard");
+  };
 
   return (
     <div className="flex items-center justify-center">
       <div className=" w-full max-w-lg max-h-[100vh] mt-10 bg-white shadow-lg rounded-lg overflow-y-auto">
-        <form
-          onSubmit={handleSubmit((data) => onSubmit(data))}
-          className=" py-4 px-6"
-        >
-          {formFields ? (
-            formFields.map((field) => (
-              <div key={field.id}>{findField(field, errors)}</div>
-            ))
-          ) : (
-            <h1>No Form Found kkkk</h1>
-          )}
-          <SubmitButton />
-        </form>
+        {formFields ? (
+          <>
+            <form
+              onSubmit={handleSubmit((data) => onSubmit(data))}
+              className=" py-4 px-6"
+            >
+              {formFields.map((field) => (
+                <div key={field.id}>{findField(field, errors)}</div>
+              ))}
+        <ButtonComponent submitTrue={true} label="Submit"/>
+
+            </form>
+          </>
+        ) : (
+          <div>
+          <h1>No Form Found</h1>
+        <ButtonComponent label="Return" onClick={()=>{navigate('/dashboard')}}/>
+          </div>
+        )}
       </div>
     </div>
   );

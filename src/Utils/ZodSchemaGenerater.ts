@@ -3,7 +3,7 @@ import type { Field } from "../Types/FormBuilder/Form";
 
 function getFieldSchema(field: Field) {
     const { required, type, maxLength, minLength, fileType } = field;
-    console.log(fileType);
+    // console.log(fileType);
     let tempSchema;
 
     switch (type) {
@@ -13,7 +13,7 @@ function getFieldSchema(field: Field) {
             if (minLength)
                 tempSchema = tempSchema.refine((val) => val.length >= minLength, `${minLength} minimum length `)
             if (maxLength)
-                tempSchema = tempSchema.refine((val) => val.length < maxLength, `${maxLength} maximum length `)
+                tempSchema = tempSchema.refine((val) => val.length <= maxLength, `${maxLength} maximum length `)
 
             if (required)
                 tempSchema = tempSchema.refine((val) => val.length >= 1, `This Field is required`)
@@ -27,7 +27,7 @@ function getFieldSchema(field: Field) {
                 // tempSchema = tempSchema.(minLength, `${minLength} minimum length required`)
                 tempSchema = tempSchema.refine((val) => `${val}`.length >= minLength, `${minLength} minimum length `)
             if (maxLength)
-                tempSchema = tempSchema.refine((val) => `${val}`.length < maxLength, `${maxLength} maximum length `)
+                tempSchema = tempSchema.refine((val) => `${val}`.length <= maxLength, `${maxLength} maximum length `)
 
             if (required)
                 tempSchema = tempSchema.refine((val) => `${val}`.length >= 1, `This Field is required`)
@@ -49,17 +49,18 @@ function getFieldSchema(field: Field) {
                 tempSchema = tempSchema.optional();
             }
             break;
-    //     case "file":
+        case "file":
 
-    //         tempSchema = z
-    //             .any()
-    //             .refine((files) => files?.length == 1, 'file is required')
-    //             .refine((files) => {console.log(files?.[0]?.type); return(fileType&& fileType.includes(files?.[0]?.type))}), `file type is must be ${fileType?.join(',')}`
-    // break
+            tempSchema = z
+                .any()
+                // .refine((files) => files?.length == 1, 'file is required')
+                // console.log(files?.[0]?.type);
+                .refine((files) => {  return (fileType && fileType.includes(files?.[0]?.type)) }), `file type is must be ${fileType?.join(',')}`
+            break
         default:
-    tempSchema = z.any()
-}
-return tempSchema
+            tempSchema = z.any()
+    }
+    return tempSchema
 }
 
 const ZodSchemaGenerater = (fields: Field[]) => {

@@ -1,5 +1,4 @@
 import {
-  closestCenter,
   DndContext,
   type DragEndEvent,
   type DragStartEvent,
@@ -21,7 +20,6 @@ import FileUploader from "../../component/form/FileUploader";
 import { Link } from "react-router";
 import { readJsonFile } from "../../Utils/readFile";
 import { addForm, openDb } from "../../config/indexDb";
-
 
 const Home = () => {
   const InputTypes = [
@@ -51,7 +49,6 @@ const Home = () => {
     setActiveId(type);
   };
 
- 
   const handleDragEnd = (e: DragEndEvent) => {
     const { active, over } = e;
     if (!over) return;
@@ -63,16 +60,9 @@ const Home = () => {
     const isExistingField = formField.find((f) => f.id === activeId);
 
     if (isNewField && overId === "canvas") {
-    setIsDropping(true);
-
-      // const newField: Field = {
-      //   id: uuidv4(),
-      //   type: activeId,
-      //   label: `${activeId} field`,
-      //   required: false,
-      //   options: [""],
-      // };
-      // setFormField((prev) => [...prev, newField]);
+      console.log(activeId);
+      console.log(overId);
+      setIsDropping(true);
     } else if (isExistingField && activeId !== overId) {
       const oldIndex = formField.findIndex((f) => f.id === activeId);
       const newIndex = formField.findIndex((f) => f.id === overId);
@@ -85,8 +75,7 @@ const Home = () => {
     // setDraggedType(null);
   };
 
-
-  const handleBuild = async() => {
+  const handleBuild = async () => {
     // console.log(storeValue);
     const hasSubmit = formField.some((f) => f.type === "submit");
     if (!hasSubmit) {
@@ -106,8 +95,8 @@ const Home = () => {
 
     // const arr = [...storeValue, formArray];
     // setStoreValue(arr);
-    await openDb()
-    addForm(formArray)
+    await openDb();
+    addForm(formArray);
     setFormField([]);
   };
 
@@ -116,19 +105,25 @@ const Home = () => {
   };
 
   const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      const data = (await readJsonFile(
-        event.target.files[0]
-      )) as unknown as FormArray;
+    try {
+      if (event.target.files) {
+        const data = (await readJsonFile(
+          event.target.files[0]
+        )) as unknown as FormArray;
 
-      setFormField(data.formElement);
+        setFormField(data.formElement);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Facing issue while fetching file");
     }
   };
+
   return (
     <DndContext
-      collisionDetection={closestCenter}
       onDragEnd={handleDragEnd}
       onDragStart={handleDragStart}
+
     >
       <div className="p-6 space-y-6 min-h-screen bg-gray-100">
         <div className="flex justify-between items-center">
@@ -163,23 +158,23 @@ const Home = () => {
               <SidebarDragItem key={type} type={type} />
             ))}
           </div>
-
-          <DropField id="canvas">
-            <SortableContext
-              items={formField.map((f) => f.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              {formField.map((field) => (
-                <DragableField
-                  key={field.id}
-                  field={field}
-                  removeField={() => removeField(field.id)}
-                  editField={() => setEditField(field)}
-                />
-              ))}
-            </SortableContext>
-          </DropField>
-          
+          <div className="w-3/4 bg-white p-4 rounded shadow h-200 ">
+            <DropField id="canvas">
+              <SortableContext
+                items={formField.map((f) => f.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                {formField.length>0?formField.map((field) => (
+                  <DragableField
+                    key={field.id}
+                    field={field}
+                    removeField={() => removeField(field.id)}
+                    editField={() => setEditField(field)}
+                  />
+                )):(<h1 className="flex justify-center items-center text-white font-bold">Drop Zone</h1>)}
+              </SortableContext>
+            </DropField>
+          </div>
         </div>
       </div>
 

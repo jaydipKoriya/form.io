@@ -1,6 +1,7 @@
 export function readJsonFile(file: Blob) {
     return new Promise((resolve, reject) => {
-        const fileReader = new FileReader();
+        try {
+            const fileReader = new FileReader();
 
         fileReader.onload = (event) => {
             if (event.target) {
@@ -11,5 +12,9 @@ export function readJsonFile(file: Blob) {
 
         fileReader.onerror = (error) => reject(error);
         fileReader.readAsText(file);
+        } catch (error) {
+            throw error
+        }
+        
     });
 }

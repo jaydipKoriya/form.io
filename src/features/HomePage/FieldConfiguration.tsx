@@ -171,13 +171,16 @@ const FieldConfiguration: React.FC<FieldConfigurationProps> = ({
                 label={"File Type"}
                 options={[
                   {
-                    label: "jpg",
-                    value: "image/jpg'",
+                    label: "jpeg",
+                    value: "image/jpeg",
                   },
                   {
                     label: "png",
                     value: "image/png",
-                  },
+                  },{
+                    label:"PDF",
+                    value:"application/pdf"
+                  }
                 ]}
                 value={value||[]}
                 onChange={onChange}
@@ -212,7 +215,6 @@ const FieldConfiguration: React.FC<FieldConfigurationProps> = ({
                   className="flex-1 p-0.5 border rounded text-sm"
                   placeholder="Label"
                 />
-
                 <button
                   type="button"
                   onClick={() => remove(index)}
